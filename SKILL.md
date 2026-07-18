@@ -9,7 +9,7 @@ description: |
   to intentionally leave files behind.
 metadata:
   cc-switch:
-    repoOwner: "<your-github-username>"
+    repoOwner: "heliumgenius"
     repoName: "disk-governance-skill"
     repoBranch: "main"
     remotePath: "SKILL.md"
