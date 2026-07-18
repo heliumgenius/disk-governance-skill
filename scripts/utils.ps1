@@ -43,6 +43,7 @@ function Get-FreeSpace {
 
 function Write-GovernanceLog {
     param([string]$SessionId, [string]$Phase, [string]$Message, [string]$LogDir)
+    if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
     $logPath = Join-Path $LogDir "governance.log"
     $entry = @{
         Timestamp = Get-Timestamp
@@ -111,4 +112,10 @@ function Resolve-PathSafe {
     return $Path
 }
 
-Export-ModuleMember -Function New-SessionId, Get-Timestamp, Get-DirectorySize, Get-FileTree, Get-FreeSpace, Write-GovernanceLog, Remove-NulFile, Test-IsWindows, New-LockFile, Remove-LockFile, Resolve-PathSafe
+function Convert-PatternToRegex {
+    param([string]$Pattern)
+    # Expand environment variables first
+    $expanded = [System.Environment]::ExpandEnvironmentVariables($Pattern)
+    $regex = [WildcardPattern]::Escape($expanded).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
+    return $regex
+}

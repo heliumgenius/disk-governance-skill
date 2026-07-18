@@ -65,8 +65,8 @@ $newFiles = @()
 $currentFiles.Keys | Where-Object { $_ -notin $snapshotFiles.Keys } | ForEach-Object {
     if ($_ -like "*\.disk-governance\*") { return }
     foreach ($pattern in $rules.protected_patterns) {
-        $regex = [WildcardPattern]::Escape($pattern).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-        if ($_ -match $regex) { return }
+        $regex = Convert-PatternToRegex -Pattern $pattern
+        try { if ($_ -match $regex) { return } } catch { }
     }
     $newFiles += $currentFiles[$_]
 }
@@ -82,14 +82,14 @@ $newFiles | ForEach-Object {
     $isConfirm = $false
 
     foreach ($pattern in $rules.auto_delete_patterns) {
-        $regex = [WildcardPattern]::Escape($pattern).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-        if ($path -match $regex) { $isAuto = $true; break }
+        $regex = Convert-PatternToRegex -Pattern $pattern
+        try { if ($path -match $regex) { $isAuto = $true; break } } catch { }
     }
 
     if (-not $isAuto) {
         foreach ($pattern in $rules.confirm_patterns) {
-            $regex = [WildcardPattern]::Escape($pattern).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-            if ($path -match $regex) { $isConfirm = $true; break }
+            $regex = Convert-PatternToRegex -Pattern $pattern
+            try { if ($path -match $regex) { $isConfirm = $true; break } } catch { }
         }
     }
 

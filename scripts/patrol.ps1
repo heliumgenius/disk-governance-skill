@@ -66,16 +66,16 @@ if (Test-Path $WorkingDir) {
         # Check protected patterns
         $isProtected = $false
         foreach ($pattern in $rules.protected_patterns) {
-            $regex = [WildcardPattern]::Escape($pattern).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-            if ($relPath -match $regex) { $isProtected = $true; break }
+            $regex = Convert-PatternToRegex -Pattern $pattern
+            try { if ($relPath -match $regex) { $isProtected = $true; break } } catch { }
         }
         if ($isProtected) { return }
 
         # Classify anomaly
         $isAuto = $false
         foreach ($pattern in $rules.auto_delete_patterns) {
-            $regex = [WildcardPattern]::Escape($pattern).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-            if ($relPath -match $regex) { $isAuto = $true; break }
+            $regex = Convert-PatternToRegex -Pattern $pattern
+            try { if ($relPath -match $regex) { $isAuto = $true; break } } catch { }
         }
 
         $anomalies += [PSCustomObject]@{
