@@ -134,8 +134,6 @@ if ($Execute) {
             $failedDeletions += [PSCustomObject]@{ Path = $_.Path; Error = $_.Exception.Message }
         }
     }
-
-    Remove-Item -Path $GovernanceDir -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 # Generate report
@@ -161,10 +159,17 @@ $report = @{
     KeptItems = $keep
 }
 
+# Save report to governance dir (must happen before cleanup)
+if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
 $reportPath = Join-Path $logDir "purge-$(Get-Date -Format 'yyyyMMddHHmmss').json"
 $report | ConvertTo-Json -Depth 5 | Set-Content -Path $reportPath
 
 Write-GovernanceLog -SessionId $SessionId -Phase "purge" -Message "Purge complete. $(if($Execute){'Freed: '+$report.Summary.TotalFreedMB+'MB'}else{'Dry-run, no deletions'})" -LogDir $logDir
+
+# Clean governance artifacts (only after report is saved)
+if ($Execute) {
+    Remove-Item -Path $GovernanceDir -Force -Recurse -ErrorAction SilentlyContinue
+}
 
 Remove-LockFile -Path $lockPath
 

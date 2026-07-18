@@ -114,8 +114,33 @@ function Resolve-PathSafe {
 
 function Convert-PatternToRegex {
     param([string]$Pattern)
-    # Expand environment variables first
     $expanded = [System.Environment]::ExpandEnvironmentVariables($Pattern)
-    $regex = [WildcardPattern]::Escape($expanded).Replace('\*\*', '.*').Replace('\*', '[^\\]*')
-    return $regex
+    $normalized = $expanded.Replace('\', '/')
+    $sb = New-Object System.Text.StringBuilder
+    $i = 0
+    while ($i -lt $normalized.Length) {
+        $c = $normalized[$i]
+        if ($c -eq '*' -and $i + 1 -lt $normalized.Length -and $normalized[$i + 1] -eq '*') {
+            if ($i + 2 -lt $normalized.Length -and $normalized[$i + 2] -eq '/') {
+                $sb.Append('(.*[/\\])?') | Out-Null
+                $i += 3
+            } else {
+                $sb.Append('.*') | Out-Null
+                $i += 2
+            }
+        } elseif ($c -eq '*') {
+            $sb.Append('[^/]*') | Out-Null
+            $i += 1
+        } elseif ($c -eq '?') {
+            $sb.Append('[^/]') | Out-Null
+            $i += 1
+        } elseif ($c -eq '/') {
+            $sb.Append('[/\\]') | Out-Null
+            $i += 1
+        } else {
+            $sb.Append([regex]::Escape($c.ToString())) | Out-Null
+            $i += 1
+        }
+    }
+    return $sb.ToString()
 }
