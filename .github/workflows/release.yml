@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create release archive
+        run: |
+          $archive = "disk-governance-skill-$env:GITHUB_REF_NAME.zip"
+          Compress-Archive -Path SKILL.md, scripts/, rules/, config.yaml, LICENSE, README.md -DestinationPath $archive
+          echo "archive=$archive" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.archive }}
+          generate_release_notes: true

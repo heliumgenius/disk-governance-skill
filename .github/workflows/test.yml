@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-skills:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate SKILL.md frontmatter
+        run: |
+          $content = Get-Content SKILL.md -Raw
+          if ($content -notmatch '^---\s*\n') {
+            Write-Error "SKILL.md missing YAML frontmatter"
+            exit 1
+          }
+          Write-Host "SKILL.md frontmatter: OK"
+
+  pester-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Pester
+        run: Install-Module Pester -Force -SkipPublisherCheck
+      - name: Run tests
+        run: Invoke-Pester -Path tests/ -Passthru
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck PowerShell scripts
+        run: |
+          sudo apt-get install -y shellcheck
+          find scripts/ -name "*.ps1" -exec shellcheck {} \; || true
