@@ -1,0 +1,19 @@
+# Disk governance temp files
+.disk-governance/
+tmp/
+*.snapshot.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test output
+tests/TestResults/
+*.coverage.xml

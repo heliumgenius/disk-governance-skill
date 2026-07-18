@@ -1,0 +1,10 @@
+# Copy to ~/.config/disk-governance/config.yaml and customize
+min_free_space_gb: 10
+patrol_interval_minutes: 30
+orphan_process_cleanup: true
+custom_auto_delete:
+  - "**/*.swp"
+  - "**/.terraform/**"
+custom_protected:
+  - "D:/Projects/**"
+  - "~/Videos/**"

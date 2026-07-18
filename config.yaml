@@ -1,0 +1,5 @@
+# Disk Governance default config
+min_free_space_gb: 5
+patrol_interval_minutes: 15
+idle_project_days: 90
+orphan_process_cleanup: false

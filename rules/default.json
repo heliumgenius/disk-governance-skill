@@ -1,0 +1,36 @@
+{
+  "auto_delete_patterns": [
+    "**/node_modules/**", "**/.tmp/**", "**/*.tmp", "**/*.bak", "**/*.old",
+    "**/.cache/**", "**/__pycache__/**", "**/*.pyc", "**/.next/**",
+    "**/dist/**", "**/target/**", "**/.venv/**", "**/.pytest_cache/**",
+    "**/*.pyo", "**/*.so", "**/tmpclaude-*", "**/nul",
+    "$TEMP\\opencode\\**", "$TEMP\\claude-*\\**", "$TEMP\\tmpclaude-*"
+  ],
+  "confirm_patterns": [
+    "**/*.md", "**/*.json", "**/*.yaml", "**/*.yml", "**/*.txt",
+    "**/output/**", "**/*.log"
+  ],
+  "protected_patterns": [
+    "**/.git/**", "**/.gitignore", "**/CLAUDE.md", "**/AGENTS.md",
+    "**/README.md", "**/LICENSE", "**/.env*", "**/*.key", "**/*.pem",
+    "**/*.cred"
+  ],
+  "max_file_size_mb": 50,
+  "min_free_space_gb": 5,
+  "patrol_interval_minutes": 15,
+  "idle_project_days": 90,
+  "agent_runtime_paths": {
+    "opencode": [
+      "$env:LOCALAPPDATA\\opencode\\tool-output",
+      "$env:LOCALAPPDATA\\opencode\\log",
+      "$env:TEMP\\opencode"
+    ],
+    "claude-code": [
+      "$env:USERPROFILE\\.claude\\projects",
+      "$env:USERPROFILE\\.claude\\debug",
+      "$env:USERPROFILE\\.claude\\todos",
+      "$env:USERPROFILE\\.claude\\file-history",
+      "$env:USERPROFILE\\.claude\\shell-snapshots"
+    ]
+  }
+}
